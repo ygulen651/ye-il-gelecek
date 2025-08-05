@@ -52,8 +52,7 @@ export default function DonationForm({ ngos }: DonationFormProps) {
       } else {
         setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
       }
-    } catch (error) {
-      console.error('Donation form error:', error)
+    } catch {
       setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
     } finally {
       setIsSubmitting(false)
