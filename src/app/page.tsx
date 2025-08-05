@@ -1,103 +1,197 @@
-import Image from "next/image";
+import Header from '@/components/Header'
+import StatsCard from '@/components/StatsCard'
+import DonorCard from '@/components/DonorCard'
+import DonationForm from '@/components/DonationForm'
+import LogoSlider from '@/components/LogoSlider'
+import { TreePine, MapPin, Users } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
 
-export default function Home() {
+async function getStats() {
+  const totalDonors = await prisma.donor.count()
+  const totalAmount = await prisma.donor.aggregate({
+    _sum: {
+      amount: true
+    }
+  })
+  const totalTrees = await prisma.donor.aggregate({
+    _sum: {
+      treeCount: true
+    }
+  })
+
+  return {
+    totalDonors,
+    totalAmount: totalAmount._sum.amount || 0,
+    totalTrees: totalTrees._sum.treeCount || 0
+  }
+}
+
+async function getTodayDonors() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  return await prisma.donor.findMany({
+    where: {
+      createdAt: {
+        gte: today,
+        lt: tomorrow
+      }
+    },
+    include: {
+      NGO: true
+    },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 10
+  })
+}
+
+async function getNGOs() {
+  return await prisma.nGO.findMany({
+    orderBy: {
+      name: 'asc'
+    }
+  })
+}
+
+export default async function Home() {
+  const [stats, todayDonors, ngos] = await Promise.all([
+    getStats(),
+    getTodayDonors(),
+    getNGOs()
+  ])
+
+  const afforestedArea = Math.round(stats.totalTrees * 10) // Her ağaç 10m²
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className="min-h-screen bg-green-50">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="relative w-full h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <img
+          src="/Basliksiz-2.png"
+          alt="Yeşil Gelecek"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0"
+          style={{
+            objectPosition: 'center center'
+          }}
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        {/* Content */}
+        <div className="relative z-20 flex flex-col items-center justify-center w-full px-4 text-center">
+          <div className="flex flex-col sm:flex-row gap-8 justify-center">
+            <button className="bg-green-600 text-white px-12 py-6 rounded-2xl font-black hover:bg-green-700 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 text-xl border-4 border-white">
+              Bağış Yap
+            </button>
+            <button className="bg-white text-green-700 px-12 py-6 rounded-2xl font-black hover:bg-green-600 hover:text-white transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 text-xl border-4 border-green-600">
+              Daha Fazla Bilgi
+            </button>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      {/* Today's Donors Section - İLK */}
+      <section className="py-16 bg-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Bugünün Bağışçıları
+          </h2>
+          {todayDonors.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {todayDonors.map((donor) => (
+                <DonorCard
+                  key={donor.id}
+                  fullName={donor.fullName}
+                  amount={donor.amount}
+                  treeCount={donor.treeCount}
+                  createdAt={donor.createdAt}
+                  ngoName={donor.NGO.name}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 py-8">
+              <p>Bugün henüz bağış yapılmamış.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Donation Form Section - İKİNCİ */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DonationForm ngos={ngos} />
+        </div>
+      </section>
+
+      {/* Stats Section - ÜÇÜNCÜ */}
+      <section className="py-16 bg-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Bağışlarımız
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <StatsCard
+              title="Toplam Bağışlanan Ağaç"
+              value={stats.totalTrees.toLocaleString('tr-TR')}
+              icon={TreePine}
+              description="Dikilen ağaç sayısı"
+            />
+            <StatsCard
+              title="Toplam Ağaçlandırılan Alan"
+              value={`${afforestedArea.toLocaleString('tr-TR')} m²`}
+              icon={MapPin}
+              description="Ağaçlandırılan alan"
+            />
+            <StatsCard
+              title="Toplam Bağış"
+              value={stats.totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+              icon={Users}
+              description="Toplam bağış miktarı"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* NGO Logos Section */}
+      <LogoSlider ngos={ngos} />
+
+      {/* Footer */}
+      <footer className="bg-green-800 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="text-xl font-bold mb-4">Yeşil Gelecek</h3>
+              <p className="text-green-100">
+                Gelecek nesillere yaşanabilir bir dünya bırakmak için çalışıyoruz.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-4">İletişim</h3>
+              <p className="text-green-100">
+                info@yesilgelecek.org<br />
+                +90 212 123 45 67
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-4">Sosyal Medya</h3>
+              <div className="flex space-x-4">
+                <a href="#" className="text-green-100 hover:text-white">Twitter</a>
+                <a href="#" className="text-green-100 hover:text-white">Facebook</a>
+                <a href="#" className="text-green-100 hover:text-white">Instagram</a>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-green-700 mt-8 pt-8 text-center text-green-100">
+            <p>&copy; 2024 Yeşil Gelecek. Tüm hakları saklıdır.</p>
+          </div>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
