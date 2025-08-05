@@ -37,7 +37,8 @@ export default function ContactPage() {
       } else {
         setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
       }
-    } catch {
+    } catch (error) {
+      console.error('Contact form error:', error)
       setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
     } finally {
       setIsSubmitting(false)

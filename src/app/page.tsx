@@ -5,6 +5,7 @@ import DonationForm from '@/components/DonationForm'
 import LogoSlider from '@/components/LogoSlider'
 import { TreePine, MapPin, Users } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import Image from 'next/image'
 
 async function getStats() {
   const totalDonors = await prisma.donor.count()
@@ -74,13 +75,13 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="relative w-full h-[70vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
-        <img
+        <Image
           src="/Basliksiz-2.png"
           alt="Yeşil Gelecek"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0"
-          style={{
-            objectPosition: 'center center'
-          }}
+          fill
+          className="object-cover object-center z-0"
+          priority
+          sizes="100vw"
         />
         {/* Content */}
         <div className="relative z-20 flex flex-col items-center justify-center w-full px-4 text-center">
