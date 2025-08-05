@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Image from 'next/image'
 
 interface NGO {
@@ -14,14 +14,8 @@ interface LogoSliderProps {
 }
 
 export default function LogoSlider({ ngos }: LogoSliderProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % ngos.length)
-    }, 3000)
-
-    return () => clearInterval(timer)
+    // Auto-scroll animation is handled by CSS
   }, [ngos.length])
 
   return (
@@ -33,7 +27,7 @@ export default function LogoSlider({ ngos }: LogoSliderProps) {
         
         <div className="relative overflow-hidden">
           <div className="flex space-x-12 animate-scroll">
-            {ngos.map((ngo, index) => (
+            {ngos.map((ngo) => (
               <div
                 key={ngo.id}
                 className="flex-shrink-0 w-40 h-24 bg-white rounded-lg shadow-lg p-6 flex items-center justify-center border border-gray-100"
@@ -50,7 +44,7 @@ export default function LogoSlider({ ngos }: LogoSliderProps) {
               </div>
             ))}
             {/* Duplicate for seamless loop */}
-            {ngos.map((ngo, index) => (
+            {ngos.map((ngo) => (
               <div
                 key={`duplicate-${ngo.id}`}
                 className="flex-shrink-0 w-40 h-24 bg-white rounded-lg shadow-lg p-6 flex items-center justify-center border border-gray-100"

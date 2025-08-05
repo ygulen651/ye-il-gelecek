@@ -117,7 +117,7 @@ export default function ContributorsPage() {
                 onChange={(e) => setSelectedNGO(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-black text-black"
               >
-                <option value="" className="font-black text-black">Tüm STK'lar</option>
+                <option value="" className="font-black text-black">Tüm STK&apos;lar</option>
                 {ngos.map((ngo) => (
                   <option key={ngo.id} value={ngo.id} className="font-black text-black">
                     {ngo.name}

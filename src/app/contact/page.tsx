@@ -37,7 +37,7 @@ export default function ContactPage() {
       } else {
         setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
       }
-    } catch (error) {
+    } catch {
       setMessage('Bir hata oluştu. Lütfen tekrar deneyin.')
     } finally {
       setIsSubmitting(false)
@@ -239,7 +239,7 @@ export default function ContactPage() {
                 Hangi bölgelerde ağaçlandırma yapıyorsunuz?
               </h3>
               <p className="text-gray-700">
-                Türkiye'nin farklı bölgelerinde, ihtiyaç duyulan alanlarda ağaçlandırma 
+                Türkiye&apos;nin farklı bölgelerinde, ihtiyaç duyulan alanlarda ağaçlandırma 
                 projeleri yürütüyoruz. Projelerimiz hakkında detaylı bilgi için iletişime geçebilirsiniz.
               </p>
             </div>
@@ -250,7 +250,7 @@ export default function ContactPage() {
               </h3>
               <p className="text-gray-700">
                 Bağış miktarı tamamen size kalmıştır. Her miktar değerlidir ve 
-                çevreye katkı sağlar. Minimum bağış miktarı 10 TL'dir.
+                çevreye katkı sağlar. Minimum bağış miktarı 10 TL&apos;dir.
               </p>
             </div>
 

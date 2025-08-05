@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function sendCertificateEmail(donation: any) {
+async function sendCertificateEmail(donation: { fullName: string; email: string; amount: number; treeCount: number; NGO: { name: string }; createdAt: Date }) {
   // Resend ile gerçek e-posta gönderme
   if (process.env.RESEND_API_KEY) {
     try {
@@ -274,6 +274,6 @@ async function sendCertificateEmail(donation: any) {
     console.log('📧 Test e-posta önizleme linki:', previewUrl);
     
   } catch (error) {
-    console.error('❌ Test e-posta gönderme hatası:', error.message);
+    console.error('❌ Test e-posta gönderme hatası:', error instanceof Error ? error.message : error);
   }
 } 

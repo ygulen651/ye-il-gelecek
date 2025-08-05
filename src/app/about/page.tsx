@@ -32,7 +32,7 @@ export default function AboutPage() {
                 gelecek nesillere daha yeşil ve yaşanabilir bir dünya bırakmaktır.
               </p>
               <p className="text-lg text-gray-700 mb-6">
-                Bağışçılarımızın desteğiyle, Türkiye'nin farklı bölgelerinde ağaçlandırma 
+                Bağışçılarımızın desteğiyle, Türkiye&apos;nin farklı bölgelerinde ağaçlandırma 
                 çalışmaları yapıyor ve yerel topluluklarla işbirliği içinde sürdürülebilir 
                 çevre projeleri geliştiriyoruz.
               </p>
